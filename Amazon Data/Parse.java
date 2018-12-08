@@ -18,6 +18,9 @@ public class Parse {
             ArrayList<Item> videos = new ArrayList<>();
             ArrayList<Item> dvds = new ArrayList<>();
 
+            int totalBooks = 0, totalVideos = 0, totalMusic = 0, totalDVD = 0, totalAll = 0;
+            double books_avg = 0, videos_avg = 0, music_avg = 0, dvd_avg = 0, all_avg = 0;
+
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
                 if (line.equals("")) { continue; }
@@ -68,17 +71,28 @@ public class Parse {
                     ArrayList<String> reviewsTemp = new ArrayList<>(reviews);
 
                     if (group.equals("Book")) {
+                        totalBooks += total;
+                        books_avg += avg_ranking;
                         books.add(new Item(id, asin, title, salesrank, similarTemp, categoriesTemp, avg_ranking, reviewsTemp));
                     }
                     else if (group.equals("Music")) {
+                        totalMusic += total;
+                        music_avg += avg_ranking;
                         music.add(new Item(id, asin, title, salesrank, similarTemp, categoriesTemp, avg_ranking, reviewsTemp));
                     }
                     else if (group.equals("Video")) {
+                        totalVideos += total;
+                        videos_avg += avg_ranking;
                         videos.add(new Item(id, asin, title, salesrank, similarTemp, categoriesTemp, avg_ranking, reviewsTemp));
                     }
                     else if (group.equals("DVD")) {
+                        totalDVD += total;
+                        dvd_avg += avg_ranking;
                         dvds.add(new Item(id, asin, title, salesrank, similarTemp, categoriesTemp, avg_ranking, reviewsTemp));
                     }
+                    totalAll += total;
+                    all_avg += avg_ranking;
+
                     similar.clear();
                     categories.clear();
                     reviews.clear();
@@ -86,25 +100,68 @@ public class Parse {
                 in.close();
             }
             sc.close();
+
+            
             String booksFile = "books_part2.txt";
             String musicFile = "music_part2.txt";
             String videosFile = "videos_part2.txt";
             String dvdsFile = "dvds_part2.txt";
 
-            // printItems(books, booksFile);
-            // printItems(music, musicFile);
-            // printItems(videos, videosFile);
-            // printItems(dvds, dvdsFile);
+            printItems(books, booksFile);
+            printItems(music, musicFile);
+            printItems(videos, videosFile);
+            printItems(dvds, dvdsFile);
 
             printItemsForGephi(videos, videosFile);
             printItemsForGephi(dvds, dvdsFile);
 
+            System.out.println("Books: " + books_avg + " " + books.size());
+            System.out.println("Music: " + music_avg + " " + music.size());
+            System.out.println("Videos: " + videos_avg + " " + videos.size());
+            System.out.println("DVDs: " + dvd_avg + " " + dvds.size());
 
-
+            System.out.println(totalAll + " " + (books.size() + music.size() + videos.size() + dvds.size()));
+            System.out.println(all_avg + " " + (books.size() + music.size() + videos.size() + dvds.size()));
         }
         catch (FileNotFoundException e) {
             System.out.println("file not found: " + e);
         }
+    }
+
+    public static void maxNumberOfReviews(ArrayList videos, ArrayList boosk, ArrayList music, ArrayList dvds) {
+        int maxNumReviewsForVideos = 0;
+            int maxNumReviewsForBooks = 0;
+            int maxNumReviewsForMusic = 0;
+            int maxNumReviewsForDvds = 0;
+
+            for (Item video: videos) {
+                if (video.getReviews().size() > maxNumReviewsForVideos) {
+                    maxNumReviewsForVideos = video.getReviews().size();
+                }
+            }
+
+            for (Item book: books) {
+                if (book.getReviews().size() > maxNumReviewsForBooks) {
+                    maxNumReviewsForBooks = book.getReviews().size();
+                }
+            }
+
+            for (Item mu: music) {
+                if (mu.getReviews().size() > maxNumReviewsForMusic) {
+                    maxNumReviewsForMusic = mu.getReviews().size();
+                }
+            }
+
+            for (Item dvd: dvds) {
+                if (dvd.getReviews().size() > maxNumReviewsForDvds) {
+                    maxNumReviewsForDvds = dvd.getReviews().size();
+                }
+            }
+
+            System.out.println(maxNumReviewsForVideos);
+            System.out.println(maxNumReviewsForBooks);
+            System.out.println(maxNumReviewsForMusic);
+            System.out.println(maxNumReviewsForDvds);
     }
 
     public static void printItems(ArrayList<Item> items, String filename) {
